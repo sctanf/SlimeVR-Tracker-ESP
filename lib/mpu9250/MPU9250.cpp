@@ -56,9 +56,27 @@ void MPU9250_Base::initialize(uint8_t address) {
     setFullScaleGyroRange(MPU9250_GYRO_FS_250);
     setFullScaleAccelRange(MPU9250_ACCEL_FS_2);
     setSleepEnabled(false); // thanks to Jack Elston for pointing this one out!
-    
-    // Enable Magnetometer
-    initilaizeMagnetometer();
+
+    // Enable I2C bypass to access magnetometer
+    setI2CBypassEnabled(true);
+
+    // Enable magnetometer
+    I2Cdev::writeByte(0x0D, 0x0B, 0x01);
+    // Set continuous reading mode 200hz
+    I2Cdev::writeByte(0x0D, 0x09, 0x1D);
+
+    setI2CBypassEnabled(false);
+
+    // Set up slave 0 for reading
+    I2Cdev::writeByte(devAddr, MPU9250_RA_I2C_SLV0_ADDR, 0x0D|0x80);
+    I2Cdev::writeByte(devAddr, MPU9250_RA_I2C_SLV0_REG,  0x00);
+    I2Cdev::writeByte(devAddr, MPU9250_RA_I2C_SLV0_CTRL, 0x96);
+    delay(10);
+
+    // Enable I2C master to read from magnetometer
+    setI2CMasterModeEnabled(true);
+    // Set I2C clock speed to 400kHz
+    setMasterClockSpeed(13);
 }
 
 uint8_t MPU9250_Base::getAddr() {
