@@ -194,9 +194,9 @@ namespace SlimeVR {
 
                     CalibrationConfig calibrationConfig;
                     f.read((uint8_t*)&calibrationConfig, sizeof(CalibrationConfig));
+                    uint8_t sensorId = strtoul(f.name()+14, nullptr, 10);
                     f.close();
 
-                    uint8_t sensorId = strtoul(calibrations.name(), nullptr, 10);
                     m_Logger.debug("Found sensor calibration for %s at index %d", calibrationConfigTypeToString(calibrationConfig.type), sensorId);
 
                     setCalibration(sensorId, calibrationConfig);
