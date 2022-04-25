@@ -366,7 +366,7 @@ void Network::sendHandshake()
         uint8_t mac[6];
         WiFi.macAddress(mac);
         DataTransfer::sendBytes(mac, 6); // MAC address string
-        if (DataTransfer::endPacket())
+        if (!DataTransfer::endPacket())
         {
             Serial.print("Handshake write error: ");
             Serial.println(Udp.getWriteError());
@@ -589,6 +589,8 @@ void ServerConnection::onPacketCallBack(AsyncUDPPacket packet)
                 port = packet.remotePort();
                 lastPacketMs = millis();
                 connected = true;
+                statusManager.setStatus(SlimeVR::Status::SERVER_CONNECTING, false);
+                ledManager.off();
                 Serial.printf("[Handshake] Handshake sucessful, server is %s:%d\n", packet.remoteIP().toString().c_str(), +packet.remotePort());
                 return;
             // default:
