@@ -8,10 +8,8 @@
     to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
     copies of the Software, and to permit persons to whom the Software is
     furnished to do so, subject to the following conditions:
-
     The above copyright notice and this permission notice shall be included in
     all copies or substantial portions of the Software.
-
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,8 +20,13 @@
 */
 #ifndef SLIMEVR_UDP_CLIENT_H_
 #define SLIMEVR_UDP_CLIENT_H_
-
-#include <WiFiUdp.h>
+#ifdef ESP8266
+    #include <ESP8266WiFi.h>
+    #include <ESPAsyncUDP.h>
+#else
+    #include <WiFi.h>
+    #include <AsyncUDP.h>
+#endif
 #include <Arduino.h>
 #include "quat.h"
 #include "sensors/sensor.h"
@@ -36,6 +39,8 @@ namespace ServerConnection {
     void update(Sensor *sensors[]);
     void resetConnection();
     bool isConnected();
+    size_t packet_read(AsyncUDPPacket packet, uint8_t *data, size_t len);
+    void onPacketCallBack(AsyncUDPPacket packet);
 }
 
 #endif // SLIMEVR_UDP_CLIENT_H_
