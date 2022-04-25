@@ -412,10 +412,6 @@ void updateSensorState(Sensor *sensors[]) {
     }
 }
 
-bool ServerConnection::isConnected() {
-    return connected;
-}
-
 void ServerConnection::connect()
 {
     unsigned long now = millis();
@@ -548,7 +544,7 @@ void ServerConnection::onPacketCallBack(AsyncUDPPacket packet)
                 break;
             case PACKET_RECEIVE_HANDSHAKE:
                 // Assume handshake sucessful
-                Serial.println("Handshale recived again, ignoring");
+                Serial.println("Handshake recived again, ignoring");
                 break;
             case PACKET_RECEIVE_COMMAND:
 
@@ -593,7 +589,7 @@ void ServerConnection::onPacketCallBack(AsyncUDPPacket packet)
                 port = packet.remotePort();
                 lastPacketMs = millis();
                 connected = true;
-                Serial.printf("[Handshake] Handshale sucessful, server is %s:%d\n", packet.remoteIP().toString().c_str(), +packet.remotePort());
+                Serial.printf("[Handshake] Handshake sucessful, server is %s:%d\n", packet.remoteIP().toString().c_str(), +packet.remotePort());
                 return;
             // default:
                 // break;
