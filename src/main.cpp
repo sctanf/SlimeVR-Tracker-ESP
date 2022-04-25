@@ -59,7 +59,9 @@ void setup()
     digitalWrite(33, LOW);
     pinMode(32, OUTPUT);
     digitalWrite(32, HIGH);
-    // add pin power for ext imus too
+    // ext imu gnd
+    pinMode(18, OUTPUT);
+    digitalWrite(18, LOW);
     // need power management
     
     logger.info("SlimeVR v" FIRMWARE_VERSION " starting up...");
