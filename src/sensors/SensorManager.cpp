@@ -153,6 +153,10 @@ namespace SlimeVR
         void SensorManager::update()
         {
             // Gather IMU data
+#ifndef UPDATE_IMU_UNCONNECTED
+    if (ServerConnection::isConnected())
+    {
+#endif
 #ifdef ESP32
             for (uint8_t i=0; i<16; i++) {
 #else
@@ -165,6 +169,9 @@ namespace SlimeVR
                 Wire.setClock(I2C_SPEED);
                 m_Sensor[i]->motionLoop();
             }
+#ifndef UPDATE_IMU_UNCONNECTED
+    }
+#endif
 
             if (!ServerConnection::isConnected())
             {
@@ -172,6 +179,10 @@ namespace SlimeVR
             }
 
             // Send updates
+#ifndef SEND_UPDATES_UNCONNECTED
+    if (ServerConnection::isConnected())
+    {
+#endif
 #ifdef ESP32
             for (uint8_t i=0; i<16; i++) {
 #else
@@ -184,6 +195,9 @@ namespace SlimeVR
                 Wire.setClock(I2C_SPEED);
                 m_Sensor[i]->sendData();
             }
+#ifndef SEND_UPDATES_UNCONNECTED
+    }
+#endif
         }
     }
 }
