@@ -424,13 +424,16 @@ void ServerConnection::connect()
         lastConnectionAttemptMs = now;
         udpClientLogger.info("Looking for the server...");
         Network::sendHandshake();
+#ifndef SEND_UPDATES_UNCONNECTED
         ledManager.on();
+#endif
     }
 #ifndef SEND_UPDATES_UNCONNECTED
     else if (lastConnectionAttemptMs + 20 < now)
     {
         ledManager.off();
     }
+#endif
 }
 
 void ServerConnection::resetConnection()
@@ -444,66 +447,20 @@ void ServerConnection::resetConnection()
     statusManager.setStatus(SlimeVR::Status::SERVER_CONNECTING, true);
 }
 
-void ServerConnection::update(Sensor * const sensor, Sensor * const sensor2) {
-    if(connected) {
-        int packetSize = Udp.parsePacket();
-        if (packetSize)
-        {
-            lastPacketMs = millis();
-            int len = Udp.read(incomingPacket, sizeof(incomingPacket));
-            // receive incoming UDP packets
-
-#ifdef DEBUG_NETWORK
-            udpClientLogger.trace("Received %d bytes from %s, port %d", packetSize, Udp.remoteIP().toString().c_str(), Udp.remotePort());
-            udpClientLogger.traceArray("UDP packet contents: ", incomingPacket, len);
-#endif
-
-            switch (convert_chars<int>(incomingPacket))
-            {
-            case PACKET_RECEIVE_HEARTBEAT:
-                Network::sendHeartbeat();
-                break;
-            case PACKET_RECEIVE_VIBRATE:
-                
-                break;
-            case PACKET_RECEIVE_HANDSHAKE:
-                // Assume handshake successful
-                udpClientLogger.warn("Handshake received again, ignoring");
-                break;
-            case PACKET_RECEIVE_COMMAND:
-                
-                break;
-            case PACKET_CONFIG:
-                
-                break;
-            case PACKET_PING_PONG:
-                returnLastPacket(len);
-                break;
-            case PACKET_SENSOR_INFO:
-                if(len < 6) {
-                    udpClientLogger.warn("Wrong sensor info packet");
-                    break;
-                }
-                if(incomingPacket[4] == 0) {
-                    sensorStateNotified1 = incomingPacket[5];
-                } else if(incomingPacket[4] == 1) {
-                    sensorStateNotified2 = incomingPacket[5];
-                }
-                break;
-            }
-        }
+void ServerConnection::update(Sensor *const sensor, Sensor *const sensor2)
+{
+    if (connected)
+    {
         //while(Serial.available()) {
         //    size_t bytesRead = Serial.readBytes(serialBuffer, min(Serial.available(), sizeof(serialBuffer)));
         //    sendSerial(serialBuffer, bytesRead, PACKET_SERIAL);
         //}
         if (lastPacketMs + TIMEOUT < millis())
         {
-            statusManager.setStatus(SlimeVR::Status::SERVER_CONNECTING, true);
-
             connected = false;
             sensorStateNotified1 = false;
             sensorStateNotified2 = false;
-            udpClientLogger.warn("Connection to server timed out");
+            Serial.println("Connection to server timed out");
         }
     }
 
@@ -517,70 +474,135 @@ void ServerConnection::update(Sensor * const sensor, Sensor * const sensor2) {
     }
 }
 
-void ServerConnection::update(Sensor *sensors[]) {
-    if(connected) {
-        int packetSize = Udp.parsePacket();
+void ServerConnection::update(Sensor *sensors[])
+{
+    if (connected)
+    {
+        //while(Serial.available()) {
+        //    size_t bytesRead = Serial.readBytes(serialBuffer, min(Serial.available(), sizeof(serialBuffer)));
+        //    sendSerial(serialBuffer, bytesRead, PACKET_SERIAL);
+        //}
+        if (lastPacketMs + TIMEOUT < millis())
+        {
+            connected = false;
+            for (int i=0; i<16; i++)
+            {
+                sensorStateNotified[i] = false;
+            }
+            Serial.println("Connection to server timed out");
+        }
+    }
+
+    if (!connected)
+    {
+        connect();
+    }
+    else
+    {
+        updateSensorState(sensors);
+    }
+}
+
+bool ServerConnection::isConnected()
+{
+    return connected;
+}
+size_t ServerConnection::packet_read(AsyncUDPPacket packet, uint8_t *data, size_t len)
+{
+    size_t i;
+    if (len > packet.length())
+    {
+        len = packet.length();
+    }
+    for (i = 0; i < len; i++)
+    {
+        data[i] = packet.data()[i];
+    }
+    return len;
+}
+
+void ServerConnection::onPacketCallBack(AsyncUDPPacket packet)
+{
+    if (connected)
+    {
+        int packetSize = packet.length();
         if (packetSize)
         {
             lastPacketMs = millis();
-            int len = Udp.read(incomingPacket, sizeof(incomingPacket));
-            // receive incoming UDP packets
-
-#ifdef DEBUG_NETWORK
-            udpClientLogger.trace("Received %d bytes from %s, port %d", packetSize, Udp.remoteIP().toString().c_str(), Udp.remotePort());
-            udpClientLogger.traceArray("UDP packet contents: ", incomingPacket, len);
+            int len = packet_read(packet, incomingPacket, sizeof(incomingPacket));
+// receive incoming UDP packets
+#if serialDebug == true
+            Serial.printf("Received %d bytes from %s, port %d\n", packetSize, packet.remoteIP().toString().c_str(), packet.remotePort());
+            Serial.print("UDP packet contents: ");
+            for (int i = 0; i < len; ++i)
+                Serial.print((byte)incomingPacket[i]);
+            Serial.println();
 #endif
-
             switch (convert_chars<int>(incomingPacket))
             {
             case PACKET_RECEIVE_HEARTBEAT:
                 Network::sendHeartbeat();
                 break;
             case PACKET_RECEIVE_VIBRATE:
-                
+
                 break;
             case PACKET_RECEIVE_HANDSHAKE:
-                // Assume handshake successful
-                udpClientLogger.warn("Handshake received again, ignoring");
+                // Assume handshake sucessful
+                Serial.println("Handshale recived again, ignoring");
                 break;
             case PACKET_RECEIVE_COMMAND:
-                
+
                 break;
             case PACKET_CONFIG:
-                
+
                 break;
             case PACKET_PING_PONG:
                 returnLastPacket(len);
                 break;
             case PACKET_SENSOR_INFO:
-                if(len < 6) {
-                    udpClientLogger.warn("Wrong sensor info packet");
+                if (len < 6)
+                {
+                    Serial.println("Wrong sensor info packet");
                     break;
                 }
                 sensorStateNotified[incomingPacket[4]] = incomingPacket[5];
                 break;
             }
         }
-        //while(Serial.available()) {
-        //    size_t bytesRead = Serial.readBytes(serialBuffer, min(Serial.available(), sizeof(serialBuffer)));
-        //    sendSerial(serialBuffer, bytesRead, PACKET_SERIAL);
-        //}
-        if(lastPacketMs + TIMEOUT < millis())
-        {
-            statusManager.setStatus(SlimeVR::Status::SERVER_CONNECTING, true);
-
-            connected = false;
-            for (int i=0; i<16; i++)
-            {
-                sensorStateNotified[i] = false;
-            }
-            udpClientLogger.warn("Connection to server timed out");
-        }
     }
-        
-    if(!connected) {
-        connect();
-    } else {
-        updateSensorState(sensors);
+    else
+    {
+        int packetSize = packet.length();
+        if (packetSize)
+        {
+            // receive incoming UDP packets
+            Serial.printf("[Handshake] Received %d bytes from %s, port %d\n", packetSize, packet.remoteIP().toString().c_str(), packet.remotePort());
+            int len = packet_read(packet, incomingPacket, sizeof(incomingPacket));
+            Serial.print("[Handshake] UDP packet contents: ");
+            for (int i = 0; i < len; ++i)
+                Serial.print((byte)incomingPacket[i]);
+            Serial.println();
+            // Handshake is different, it has 3 in the first byte, not the 4th, and data starts right after
+            switch (incomingPacket[0])
+            {
+            case PACKET_HANDSHAKE:
+                // Assume handshake sucessful, don't check it
+                // But proper handshake should contain "Hey OVR =D 5" ASCII string right after the packet number
+                // Starting on 14th byte (packet number, 12 bytes greetings, null-terminator) we can transfer SlimeVR handshake data
+                host = packet.remoteIP();
+                port = packet.remotePort();
+                lastPacketMs = millis();
+                connected = true;
+                Serial.printf("[Handshake] Handshale sucessful, server is %s:%d\n", packet.remoteIP().toString().c_str(), +packet.remotePort());
+                return;
+            // default:
+                // break;
+                //
+            }
+        }
+        else
+        {
+            //
+        }
     }
 }
