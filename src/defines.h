@@ -160,7 +160,7 @@
   #define PIN_IMU_INT_A2 17
   #define PIN_BATTERY_LEVEL 36
   #define LED_PIN 22
-  #define LED_INVERTED false
+  #define LED_INVERTED true
 #elif BOARD == BOARD_WROOM32
   #define PIN_IMU_SDA 0
   #define PIN_IMU_SCL_A 2
@@ -168,5 +168,5 @@
   #define PIN_IMU_INT_A2 25
   #define PIN_BATTERY_LEVEL 32
   #define LED_PIN 22
-  #define LED_INVERTED false
+  #define LED_INVERTED true
 #endif
