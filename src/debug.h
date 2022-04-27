@@ -59,10 +59,13 @@
 // Setup for the Magnetometer
 #define useFullCalibrationMatrix true
 
+// Calibration toggle
+#define CALIBRATION_DISABLE
+
 // Battery configuration
 #define batterySampleRate 10000
-#define BATTERY_LOW_VOLTAGE_DEEP_SLEEP false
-#define BATTERY_LOW_POWER_VOLTAGE 3.3f // Voltage to raise error
+#define BATTERY_LOW_VOLTAGE_DEEP_SLEEP true
+#define BATTERY_LOW_POWER_VOLTAGE 3.2f // Voltage to raise error
 
 // Send updates over network only when changes are substantial
 // If "false" updates are sent at the sensor update rate (usually 100 TPS)
