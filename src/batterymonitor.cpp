@@ -125,7 +125,6 @@ bool BatteryMonitor::Loop(bool forceSample)
                     {
                         #if defined(BATTERY_LOW_VOLTAGE_DEEP_SLEEP) && BATTERY_LOW_VOLTAGE_DEEP_SLEEP
                             //ESP.deepSleep(0);
-                            m_Logger.info("Low battery! %fV", voltage);
                             return true;
                         #else
                             statusManager.setStatus(SlimeVR::Status::LOW_BATTERY, true);
