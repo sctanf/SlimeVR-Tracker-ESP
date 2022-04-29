@@ -79,7 +79,7 @@ void MPU6050Sensor::motionSetup()
         imu.PrintActiveOffsets();
 #endif // IMU_MPU6050_RUNTIME_CALIBRATION
 
-        ledManager.pattern(50, 50, 5);
+        //ledManager.pattern(50, 50, 5);
 
         // turn on the DMP, now that it's ready
         m_Logger.debug("Enabling DMP...");
