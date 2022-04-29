@@ -35,6 +35,11 @@
 #include "batterymonitor.h"
 #include "logging/Logger.h"
 
+#if !ESP8266
+#include "esp_wifi.h"
+#include "esp_sleep.h"
+#endif
+
 SlimeVR::Logging::Logger logger("SlimeVR");
 SlimeVR::Sensors::SensorManager sensorManager;
 SlimeVR::LEDManager ledManager(LED_PIN);
