@@ -51,7 +51,7 @@
 #define samplingRateInMillis 10
 
 // Sleeping options
-#define POWERSAVING_MODE POWER_SAVING_LEGACY  // Minimum causes sporadic data pauses
+#define POWERSAVING_MODE POWER_SAVING_MAXIMUM  // Minimum causes sporadic data pauses
 #if POWERSAVING_MODE >= POWER_SAVING_MINIMUM
     #define TARGET_LOOPTIME_MICROS (samplingRateInMillis * 1000)
 #endif
@@ -65,13 +65,13 @@
 // Battery configuration
 #define batterySampleRate 10000
 #define BATTERY_LOW_VOLTAGE_DEEP_SLEEP true
-#define BATTERY_LOW_POWER_VOLTAGE 3.2f // Voltage to raise error
+#define BATTERY_LOW_POWER_VOLTAGE 3.3f // Voltage to raise error
 
 // Send updates over network only when changes are substantial
 // If "false" updates are sent at the sensor update rate (usually 100 TPS)
 // If "true" updates will be less frequent in the time of little motion
 // Experimental
-#define OPTIMIZE_UPDATES true
+#define OPTIMIZE_UPDATES false
 
 #define I2C_SPEED 800000
 
