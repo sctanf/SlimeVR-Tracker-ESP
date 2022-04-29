@@ -53,9 +53,9 @@ namespace SlimeVR
 #endif
                 uint8_t firstIMUAddress = 0;
                 uint8_t secondIMUAddress = 0;
-                Wire.begin(imuSDAPin[i/8], imuSCLPin[i/2]);
 
                 {
+                    Wire.begin(imuSDAPin[i/8], imuSCLPin[i/2]);
                     if (imu[i] == IMU_BNO080 || imu[i] == IMU_BNO085 || imu[i] == IMU_BNO086)
                         firstIMUAddress = I2CSCAN::pickDevice(0x4A, 0x4B, true);
                     else if (imu[i] == IMU_BNO055)
@@ -65,6 +65,7 @@ namespace SlimeVR
 
                     if (firstIMUAddress == 0)
                     {
+                        UI::SetIMUStatus(i, false);
                         m_Logger.debug("IMU %d not found", i);
                     }
                     else
@@ -86,8 +87,10 @@ namespace SlimeVR
                             m_Sensor[i] = new ICM20948Sensor(i, firstIMUAddress, imuRotation[i]);
 
                         m_Sensor[i]->motionSetup();
+                        UI::SetIMUStatus(i, true);
                     }
 
+                    Wire.begin(imuSDAPin[i/8], imuSCLPin[i/2]);
                     if (imu[i+1] == IMU_BNO080 || imu[i+1] == IMU_BNO085 || imu[i+1] == IMU_BNO086)
                         secondIMUAddress = I2CSCAN::pickDevice(0x4B, 0x4A, true);
                     else if (imu[i+1] == IMU_BNO055)
@@ -97,6 +100,7 @@ namespace SlimeVR
 
                     if (secondIMUAddress == 0 || secondIMUAddress == firstIMUAddress)
                     {
+                        UI::SetIMUStatus(i+1, false);
                         m_Logger.debug("IMU %d not found", i+1);
                     }
                     else
@@ -118,6 +122,7 @@ namespace SlimeVR
                             m_Sensor[i+1] = new ICM20948Sensor(i+1, secondIMUAddress, imuRotation[i+1]);
 
                         m_Sensor[i+1]->motionSetup();
+                        UI::SetIMUStatus(i+1, true);
                     }
                 }
             }

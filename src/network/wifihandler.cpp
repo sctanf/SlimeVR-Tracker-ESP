@@ -116,6 +116,7 @@ void onConnected() {
 void WiFiNetwork::upkeep() {
     upkeepProvisioning();
     if(WiFi.status() != WL_CONNECTED) {
+UI::SetWifi(0);
         if(isWifiConnected) {
             wifiHandlerLogger.warn("Connection to WiFi lost, reconnecting...");
             isWifiConnected = false;
@@ -156,6 +157,7 @@ void WiFiNetwork::upkeep() {
         if(millis() - last_rssi_sample >= 2000) {
             last_rssi_sample = millis();
             uint8_t signalStrength = WiFi.RSSI();
+UI::SetWifi(((int)signalStrength+25)/51);
             Network::sendSignalStrength(signalStrength);
         }
     }

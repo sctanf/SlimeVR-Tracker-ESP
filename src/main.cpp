@@ -35,6 +35,8 @@
 #include "batterymonitor.h"
 #include "logging/Logger.h"
 
+#include "UI\UI.h"
+
 #if !ESP8266
 #include "esp_wifi.h"
 #include "esp_sleep.h"
@@ -70,6 +72,12 @@ void setup()
     Serial.println();
 
     logger.info("SlimeVR v" FIRMWARE_VERSION " starting up...");
+//pinMode(32, OUTPUT);
+//digitalWrite(32, HIGH);
+//pinMode(33, OUTPUT);
+//digitalWrite(33, LOW);
+pinMode(18, OUTPUT);
+digitalWrite(18, HIGH);
 
     //wifi_set_sleep_type(NONE_SLEEP_T);
 
@@ -86,6 +94,10 @@ void setup()
     Wire.setClockStretchLimit(150000L); // Default stretch limit 150mS
 #endif
     Wire.setClock(I2C_SPEED);
+
+UI::Setup();
+UI::MainUIFrame();
+battery.Loop(true);
 
     sensorManager.setup();
 
@@ -107,6 +119,7 @@ void loop()
     Network::update(sensorManager.get());
     if (battery.Loop()) {
         sensorManager.sleepSensors(true);
+UI::Power(false);
         sensorManager.setPinsInput();
 digitalWrite(18, LOW);
 pinMode(18, INPUT);

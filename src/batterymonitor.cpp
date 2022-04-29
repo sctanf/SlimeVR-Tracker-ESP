@@ -119,6 +119,7 @@ bool BatteryMonitor::Loop(bool forceSample)
                     level = 1;
                 else if (level < 0)
                     level = 0;
+UI::SetBattery((int)((level+0.049)*10));
                 Network::sendBatteryLevel(voltage, level);
                 #ifdef BATTERY_LOW_POWER_VOLTAGE
                     if (voltage < BATTERY_LOW_POWER_VOLTAGE)
