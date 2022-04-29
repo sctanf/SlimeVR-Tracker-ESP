@@ -25,25 +25,28 @@
 // https://docs.slimevr.dev/firmware/configuring-project.html#2-configuring-definesh
 // ================================================
 
+// Quick swap 6050 and 9250
+#define USE_6050
+
 // Set parameters of IMU and board used
 #define BOARD BOARD_CUSTOM
 
-#define IMU_A1 IMU_MPU9250
-#define IMU_A2 IMU_MPU9250
-#define IMU_B1 IMU_MPU9250
-#define IMU_B2 IMU_MPU9250
-#define IMU_C1 IMU_MPU9250
-#define IMU_C2 IMU_MPU9250
-#define IMU_D1 IMU_MPU9250
-#define IMU_D2 IMU_MPU9250
-#define IMU_ROTATION_A1 DEG_0
-#define IMU_ROTATION_A2 DEG_0
-#define IMU_ROTATION_B1 DEG_0
-#define IMU_ROTATION_B2 DEG_0
-#define IMU_ROTATION_C1 DEG_0
-#define IMU_ROTATION_C2 DEG_0
-#define IMU_ROTATION_D1 DEG_0
-#define IMU_ROTATION_D2 DEG_0
+//#define IMU_A1 IMU_MPU6050
+//#define IMU_A2 IMU_MPU6050
+//#define IMU_B1 IMU_MPU6050
+//#define IMU_B2 IMU_MPU6050
+//#define IMU_C1 IMU_MPU6050
+//#define IMU_C2 IMU_MPU6050
+//#define IMU_D1 IMU_MPU6050
+//#define IMU_D2 IMU_MPU6050
+#define IMU_ROTATION_A1 DEG_90
+#define IMU_ROTATION_A2 DEG_90
+#define IMU_ROTATION_B1 DEG_90
+#define IMU_ROTATION_B2 DEG_90
+#define IMU_ROTATION_C1 DEG_90
+#define IMU_ROTATION_C2 DEG_90
+#define IMU_ROTATION_D1 DEG_90
+#define IMU_ROTATION_D2 DEG_90
 //#define PIN_IMU_SDA 26
 //#define PIN_IMU_SCL_A 25
 #define PIN_IMU_SCL_B 15
@@ -59,22 +62,22 @@
 #define PIN_IMU_INT_D2 255
 
 // Usable with ESP32 (Wire1) only?
-#define IMU_1A1 IMU_MPU9250
-#define IMU_1A2 IMU_MPU9250
-#define IMU_1B1 IMU_MPU9250
-#define IMU_1B2 IMU_MPU9250
-#define IMU_1C1 IMU_MPU9250
-#define IMU_1C2 IMU_MPU9250
-#define IMU_1D1 IMU_MPU9250
-#define IMU_1D2 IMU_MPU9250
-#define IMU_ROTATION_1A1 DEG_0
-#define IMU_ROTATION_1A2 DEG_0
-#define IMU_ROTATION_1B1 DEG_0
-#define IMU_ROTATION_1B2 DEG_0
-#define IMU_ROTATION_1C1 DEG_0
-#define IMU_ROTATION_1C2 DEG_0
-#define IMU_ROTATION_1D1 DEG_0
-#define IMU_ROTATION_1D2 DEG_0
+//#define IMU_1A1 IMU_MPU6050
+//#define IMU_1A2 IMU_MPU6050
+//#define IMU_1B1 IMU_MPU6050
+//#define IMU_1B2 IMU_MPU6050
+//#define IMU_1C1 IMU_MPU6050
+//#define IMU_1C2 IMU_MPU6050
+//#define IMU_1D1 IMU_MPU6050
+//#define IMU_1D2 IMU_MPU6050
+#define IMU_ROTATION_1A1 DEG_90
+#define IMU_ROTATION_1A2 DEG_90
+#define IMU_ROTATION_1B1 DEG_90
+#define IMU_ROTATION_1B2 DEG_90
+#define IMU_ROTATION_1C1 DEG_90
+#define IMU_ROTATION_1C2 DEG_90
+#define IMU_ROTATION_1D1 DEG_90
+#define IMU_ROTATION_1D2 DEG_90
 #define PIN_IMU_SDA_1 23
 #define PIN_IMU_SCL_1A 4
 #define PIN_IMU_SCL_1B 16
@@ -173,4 +176,40 @@
   #define PIN_BATTERY_LEVEL 32
   #define LED_PIN 22
   #define LED_INVERTED true
+#endif
+
+#ifdef USE_6050
+#define IMU_A1 IMU_MPU6050
+#define IMU_A2 IMU_MPU6050
+#define IMU_B1 IMU_MPU6050
+#define IMU_B2 IMU_MPU6050
+#define IMU_C1 IMU_MPU6050
+#define IMU_C2 IMU_MPU6050
+#define IMU_D1 IMU_MPU6050
+#define IMU_D2 IMU_MPU6050
+#define IMU_1A1 IMU_MPU6050
+#define IMU_1A2 IMU_MPU6050
+#define IMU_1B1 IMU_MPU6050
+#define IMU_1B2 IMU_MPU6050
+#define IMU_1C1 IMU_MPU6050
+#define IMU_1C2 IMU_MPU6050
+#define IMU_1D1 IMU_MPU6050
+#define IMU_1D2 IMU_MPU6050
+#else
+#define IMU_A1 IMU_MPU9250
+#define IMU_A2 IMU_MPU9250
+#define IMU_B1 IMU_MPU9250
+#define IMU_B2 IMU_MPU9250
+#define IMU_C1 IMU_MPU9250
+#define IMU_C2 IMU_MPU9250
+#define IMU_D1 IMU_MPU9250
+#define IMU_D2 IMU_MPU9250
+#define IMU_1A1 IMU_MPU9250
+#define IMU_1A2 IMU_MPU9250
+#define IMU_1B1 IMU_MPU9250
+#define IMU_1B2 IMU_MPU9250
+#define IMU_1C1 IMU_MPU9250
+#define IMU_1C2 IMU_MPU9250
+#define IMU_1D1 IMU_MPU9250
+#define IMU_1D2 IMU_MPU9250
 #endif
