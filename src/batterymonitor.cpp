@@ -45,11 +45,11 @@ void BatteryMonitor::Setup()
 #endif
 }
 
-void BatteryMonitor::Loop()
+bool BatteryMonitor::Loop(bool forceSample)
 {
     #if BATTERY_MONITOR == BAT_EXTERNAL || BATTERY_MONITOR == BAT_INTERNAL || BATTERY_MONITOR == BAT_MCP3021 || BATTERY_MONITOR == BAT_INTERNAL_MCP3021
         auto now_ms = millis();
-        if (now_ms - last_battery_sample >= batterySampleRate)
+        if (now_ms - last_battery_sample >= batterySampleRate || forceSample)
         {
             last_battery_sample = now_ms;
             voltage = -1;
@@ -124,7 +124,9 @@ void BatteryMonitor::Loop()
                     if (voltage < BATTERY_LOW_POWER_VOLTAGE)
                     {
                         #if defined(BATTERY_LOW_VOLTAGE_DEEP_SLEEP) && BATTERY_LOW_VOLTAGE_DEEP_SLEEP
-                            ESP.deepSleep(0);
+                            //ESP.deepSleep(0);
+                            m_Logger.info("Low battery! %fV", voltage);
+                            return true;
                         #else
                             statusManager.setStatus(SlimeVR::Status::LOW_BATTERY, true);
                         #endif
@@ -135,4 +137,5 @@ void BatteryMonitor::Loop()
             }
         }
     #endif
+    return false;
 }

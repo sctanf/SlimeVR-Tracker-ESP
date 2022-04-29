@@ -75,7 +75,7 @@ class BatteryMonitor
 {
 public:
     void Setup();
-    void Loop();
+    bool Loop(bool forceSample = false);
 
 private:
     unsigned long last_battery_sample = 0;

@@ -50,15 +50,21 @@ BatteryMonitor battery;
 
 void setup()
 {
+    // need power management
+    battery.Setup();
+    if (battery.Loop(true)) {
+        //esp_sleep_enable_ext1_wakeup(1ULL<<39, ESP_EXT1_WAKEUP_ANY_HIGH);
+        //esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_OFF);
+        esp_deep_sleep_start();
+    }
+    //add pin power (mosfet) for imus
+
     Serial.begin(serialBaudRate);
     Serial.println();
     Serial.println();
     Serial.println();
-    
-    // need power management
-    
-    logger.info("SlimeVR v" FIRMWARE_VERSION " starting up...");
 
+    logger.info("SlimeVR v" FIRMWARE_VERSION " starting up...");
 
     //wifi_set_sleep_type(NONE_SLEEP_T);
 
@@ -80,7 +86,6 @@ void setup()
 
     Network::setUp();
     OTA::otaSetup(otaPassword);
-    battery.Setup();
 
     statusManager.setStatus(SlimeVR::Status::LOADING, false);
 
@@ -95,25 +100,15 @@ void loop()
     OTA::otaUpdate();
     sensorManager.update();
     Network::update(sensorManager.get());
-    battery.Loop();
-    ledManager.update();
-
-#ifdef TARGET_LOOPTIME_MICROS
-    long elapsed = (micros() - loopTime);
-    if (elapsed < TARGET_LOOPTIME_MICROS)
-    {
-        long sleepus = TARGET_LOOPTIME_MICROS - elapsed - 100;//µs to sleep
-        long sleepms = sleepus / 1000;//ms to sleep
-        if(sleepms > 0) // if >= 1 ms
-        {
-            delay(sleepms); // sleep ms = save power
-            sleepus -= sleepms * 1000;
-        }
-        if (sleepus > 100)
-        {
-            delayMicroseconds(sleepus);
-        }
+    if (battery.Loop()) {
+        sensorManager.sleepSensors(true);
+        sensorManager.setPinsInput();
+digitalWrite(18, LOW);
+pinMode(18, INPUT);
+        esp_wifi_stop();
+        //esp_sleep_enable_ext1_wakeup(1ULL<<39, ESP_EXT1_WAKEUP_ANY_HIGH);
+        //esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_OFF);
+        esp_deep_sleep_start();
     }
-    loopTime = micros();
-#endif
+    ledManager.update();
 }
