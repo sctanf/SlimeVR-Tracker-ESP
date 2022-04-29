@@ -40,6 +40,9 @@ void Sensor::sendData() {
     }
 }
 
+void Sensor::sleepSensor() {
+}
+
 const char * getIMUNameByType(int imuType) {
     switch(imuType) {
         case IMU_MPU9250:

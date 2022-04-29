@@ -53,6 +53,7 @@ public:
     virtual void sendData();
     virtual void startCalibration(int calibrationType){};
     virtual uint8_t getSensorState();
+    virtual void sleepSensor();
     bool isWorking()
     {
         return working;

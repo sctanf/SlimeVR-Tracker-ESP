@@ -196,3 +196,9 @@ void MPU6050Sensor::startCalibration(int calibrationType) {
 
     ledManager.off();
 }
+
+void MPU6050Sensor::sleepSensor()
+{
+    uint8_t val;
+	I2Cdev::writeBit(addr,0x6B, 6, (val = 1)); //PWR_MGMT_1: sleep mode
+}

@@ -38,6 +38,7 @@ public:
     void motionLoop() override final;
     void startCalibration(int calibrationType) override final;
     void getMPUScaled();
+    void sleepSensor() override final;
 
 private:
     MPU imu{};

@@ -84,6 +84,8 @@ namespace SlimeVR
                             m_Sensor[i] = new MPU6050Sensor(i, imu[i], firstIMUAddress, imuRotation[i]);
                         else if (imu[i] == IMU_ICM20948)
                             m_Sensor[i] = new ICM20948Sensor(i, firstIMUAddress, imuRotation[i]);
+
+                        m_Sensor[i]->motionSetup();
                     }
 
                     if (imu[i+1] == IMU_BNO080 || imu[i+1] == IMU_BNO085 || imu[i+1] == IMU_BNO086)
@@ -114,6 +116,8 @@ namespace SlimeVR
                             m_Sensor[i+1] = new MPU6050Sensor(i+1, imu[i+1], secondIMUAddress, imuRotation[i+1]);
                         else if (imu[i+1] == IMU_ICM20948)
                             m_Sensor[i+1] = new ICM20948Sensor(i+1, secondIMUAddress, imuRotation[i+1]);
+
+                        m_Sensor[i+1]->motionSetup();
                     }
                 }
             }
@@ -123,8 +127,8 @@ namespace SlimeVR
 #else
                 for (uint8_t i=0; i<8; i++) {
 #endif
-                    Wire.begin(imuSDAPin[i/8], imuSCLPin[i/2]);
-                    m_Sensor[i]->motionSetup();
+                    //Wire.begin(imuSDAPin[i/8], imuSCLPin[i/2]);
+                    //m_Sensor[i]->motionSetup();
                 }
             } else {
                 Serial.println("[ERR] I2C: Can't find I2C device on provided addresses, scanning for all I2C devices and returning");
@@ -165,6 +169,28 @@ namespace SlimeVR
 #endif
                     m_Sensor[i]->sendData();
                 }
+            }
+        }
+
+        void SensorManager::sleepSensors(bool sleepMain)
+        {
+#ifdef ESP32
+            for (uint8_t i=sleepMain?0:1; i<16; i++) {
+#else
+            for (uint8_t i=sleepMain?0:1; i<8; i++) {
+#endif
+                Wire.begin(imuSDAPin[i/8], imuSCLPin[i/2]);
+                m_Sensor[i]->sleepSensor();
+            }
+        }
+
+        void SensorManager::setPinsInput()
+        {
+            for (uint8_t i=0; i<8; i++) {
+                pinMode(imuSCLPin[i], INPUT);
+            }
+            for (uint8_t i=0; i<2; i++) {
+                pinMode(imuSDAPin[i], INPUT);
             }
         }
     }

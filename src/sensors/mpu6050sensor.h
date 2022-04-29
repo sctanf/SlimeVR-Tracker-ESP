@@ -35,6 +35,7 @@ public:
     void motionSetup() override final;
     void motionLoop() override final;
     void startCalibration(int calibrationType) override final;
+    void sleepSensor() override final;
 
 private:
     MPU imu{};

@@ -390,3 +390,9 @@ void MPU9250Sensor::startCalibration(int calibrationType) {
 
     m_Logger.info("Calibration data gathered");
 }
+
+void MPU9250Sensor::sleepSensor()
+{
+    uint8_t val;
+	I2Cdev::writeBit(addr,0x6B, 6, (val = 1)); //PWR_MGMT_1: sleep mode
+}
