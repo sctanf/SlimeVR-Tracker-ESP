@@ -119,11 +119,11 @@ void MPU9250Sensor::motionSetup() {
     }
 #endif
 
-    imu.initializeMagnetometer();
-    if (imu.testConnectionMagnetometer()) {
-        m_Logger.fatal("Can't connect to AK8963 (0x%02x)", imu.getMagnetometerDeviceID());
-        return;
-    }
+    //imu.initializeMagnetometer();
+    //if (imu.testConnectionMagnetometer()) {
+    //    m_Logger.fatal("Can't connect to AK8963 (0x%02x)", imu.getMagnetometerDeviceID());
+    //    return;
+    //}
     working = true;
     configured = true;
 }

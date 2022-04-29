@@ -68,9 +68,9 @@ void MPU::initialize(uint8_t address) {
     setI2CBypassEnabled(false);
 
     // Set up slave 0 for reading
-    I2Cdev::writeByte(devAddr, MPU9250_RA_I2C_SLV0_ADDR, 0x0D|0x80);
-    I2Cdev::writeByte(devAddr, MPU9250_RA_I2C_SLV0_REG,  0x00);
-    I2Cdev::writeByte(devAddr, MPU9250_RA_I2C_SLV0_CTRL, 0x96);
+    I2Cdev::writeByte(devAddr, MPU_RA_I2C_SLV0_ADDR, 0x0D|0x80);
+    I2Cdev::writeByte(devAddr, MPU_RA_I2C_SLV0_REG,  0x00);
+    I2Cdev::writeByte(devAddr, MPU_RA_I2C_SLV0_CTRL, 0x96);
     delay(10);
 
     // Enable I2C master to read from magnetometer
