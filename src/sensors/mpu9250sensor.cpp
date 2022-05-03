@@ -57,13 +57,13 @@ void MPU9250Sensor::motionSetup() {
     imu.getAcceleration(&ax, &ay, &az);
     float g_az = (float)az / 4096; // For 8G sensitivity
     if(g_az < -0.75f) {
-        ledManager.on();
         ledManager.off();
         delay(500);
-        ledManager.on();
-        ledManager.pattern(250, 250, sensorId);
         m_Logger.info("Flip front to confirm start calibration");
-        delay(5000);
+        ledManager.on();
+        delay(50);
+        ledManager.off();
+        delay(2450);
         ledManager.off();
 
         imu.getAcceleration(&ax, &ay, &az);
@@ -237,9 +237,9 @@ void MPU9250Sensor::getMPUScaled()
     // Orientations of axes are set in accordance with the datasheet
     // See Section 9.1 Orientation of Axes
     // https://invensense.tdk.com/wp-content/uploads/2015/02/PS-MPU-9250A-01-v1.1.pdf
-    Mxyz[0] = (float)my;
-    Mxyz[1] = (float)mx;
-    Mxyz[2] = -(float)mz;
+    Mxyz[0] = (float)mx;
+    Mxyz[1] = (float)my;
+    Mxyz[2] = (float)mz;
     //apply offsets and scale factors from Magneto
     #if useFullCalibrationMatrix == true
         for (i = 0; i < 3; i++)
@@ -261,17 +261,17 @@ void MPU9250Sensor::startCalibration(int calibrationType) {
 
     // Blink calibrating led before user should rotate the sensor
     m_Logger.info("Gently rotate the device while it's gathering magnetometer data");
-    ledManager.pattern(15, 85, 10);
+    ledManager.pattern(50, 450, 3);
     float *calibrationDataMag = (float*)malloc(calibrationSamples * 3 * sizeof(float));
     for (int i = 0; i < calibrationSamples; i++) {
         ledManager.on();
         int16_t mx,my,mz;
         imu.getMagnetometer(&mx, &my, &mz);
-        calibrationDataMag[i * 3 + 0] = my;
-        calibrationDataMag[i * 3 + 1] = mx;
-        calibrationDataMag[i * 3 + 2] = -mz;
-        Network::sendRawCalibrationData(calibrationDataMag, CALIBRATION_TYPE_EXTERNAL_MAG, sensorId);
+        calibrationDataMag[i * 3 + 0] = mx;
+        calibrationDataMag[i * 3 + 1] = my;
+        calibrationDataMag[i * 3 + 2] = mz;
         ledManager.off();
+        m_Logger.info("Sample %d/%d",i,calibrationSamples);
         delay(100);
     }
     m_Logger.debug("Calculating calibration data...");
@@ -302,7 +302,8 @@ void MPU9250Sensor::startCalibration(int calibrationType) {
 
     // Wait for sensor to calm down before calibration
     m_Logger.info("Put down the device and wait for baseline gyro reading calibration");
-    delay(2000);
+    ledManager.pattern(50, 450, 2);
+    delay(1000);
     for (int i = 0; i < calibrationSamples; i++)
     {
         int16_t ax,ay,az,gx,gy,gz,mx,my,mz;
@@ -326,7 +327,7 @@ void MPU9250Sensor::startCalibration(int calibrationType) {
 
     // Blink calibrating led before user should rotate the sensor
     m_Logger.info("Gently rotate the device while it's gathering accelerometer and magnetometer data");
-    ledManager.pattern(15, 85, 10);
+    ledManager.pattern(50, 450, 3);
     float *calibrationDataAcc = (float*)malloc(calibrationSamples * 3 * sizeof(float));
     float *calibrationDataMag = (float*)malloc(calibrationSamples * 3 * sizeof(float));
     for (int i = 0; i < calibrationSamples; i++) {
@@ -336,12 +337,11 @@ void MPU9250Sensor::startCalibration(int calibrationType) {
         calibrationDataAcc[i * 3 + 0] = ax;
         calibrationDataAcc[i * 3 + 1] = ay;
         calibrationDataAcc[i * 3 + 2] = az;
-        calibrationDataMag[i * 3 + 0] = my;
-        calibrationDataMag[i * 3 + 1] = mx;
-        calibrationDataMag[i * 3 + 2] = -mz;
-        Network::sendRawCalibrationData(calibrationDataAcc, CALIBRATION_TYPE_EXTERNAL_ACCEL, 0);
-        Network::sendRawCalibrationData(calibrationDataMag, CALIBRATION_TYPE_EXTERNAL_MAG, 0);
+        calibrationDataMag[i * 3 + 0] = mx;
+        calibrationDataMag[i * 3 + 1] = my;
+        calibrationDataMag[i * 3 + 2] = mz;
         ledManager.off();
+        m_Logger.info("Sample %d/%d",i,calibrationSamples);
         delay(100);
     }
     m_Logger.debug("Calculating calibration data...");
@@ -389,6 +389,9 @@ void MPU9250Sensor::startCalibration(int calibrationType) {
     m_Logger.debug("Saved the calibration data");
 
     m_Logger.info("Calibration data gathered");
+    
+    m_Logger.info("Flip for next IMU calibration..");
+    delay(2000);
 }
 
 void MPU9250Sensor::sleepSensor()

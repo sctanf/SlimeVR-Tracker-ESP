@@ -60,7 +60,7 @@
 #define useFullCalibrationMatrix true
 
 // Calibration toggle
-#define CALIBRATION_DISABLE
+//#define CALIBRATION_DISABLE
 
 // Battery configuration
 #define batterySampleRate 10000

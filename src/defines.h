@@ -26,7 +26,7 @@
 // ================================================
 
 // Quick swap 6050 and 9250
-#define USE_6050
+//#define USE_6050
 
 // Set parameters of IMU and board used
 #define BOARD BOARD_CUSTOM
