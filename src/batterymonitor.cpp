@@ -45,7 +45,7 @@ void BatteryMonitor::Setup()
 #endif
 }
 
-bool BatteryMonitor::Loop(bool forceSample)
+bool BatteryMonitor::Loop(bool forceSample, bool updateOled)
 {
     #if BATTERY_MONITOR == BAT_EXTERNAL || BATTERY_MONITOR == BAT_INTERNAL || BATTERY_MONITOR == BAT_MCP3021 || BATTERY_MONITOR == BAT_INTERNAL_MCP3021
         auto now_ms = millis();
@@ -119,6 +119,7 @@ bool BatteryMonitor::Loop(bool forceSample)
                     level = 1;
                 else if (level < 0)
                     level = 0;
+if (updateOled)
 UI::SetBattery((int)((level+0.049)*10));
                 Network::sendBatteryLevel(voltage, level);
                 #ifdef BATTERY_LOW_POWER_VOLTAGE

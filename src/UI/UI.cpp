@@ -21,12 +21,14 @@ const unsigned char interslime_u [] PROGMEM = {
         Wire.begin(PIN_IMU_SDA, PIN_IMU_SCL_A);
         oled.setPower(power);
     }
+
     void Setup()
     {
         Wire.begin(PIN_IMU_SDA, PIN_IMU_SCL_A);
         oled.init();
         oled.clear();
         oled.update();
+        oled.setContrast(0);
     }
 
     void MainUIFrame()
@@ -129,5 +131,4 @@ const unsigned char interslime_u [] PROGMEM = {
 
         oled.update();
     }
-
 }

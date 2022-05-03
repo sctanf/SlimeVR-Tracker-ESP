@@ -59,7 +59,7 @@ void setup()
 {
     // need power management
     battery.Setup();
-    if (battery.Loop(true)) {
+    if (battery.Loop(true, false)) {
         //esp_sleep_enable_ext1_wakeup(1ULL<<39, ESP_EXT1_WAKEUP_ANY_HIGH);
         //esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_OFF);
         esp_deep_sleep_start();
