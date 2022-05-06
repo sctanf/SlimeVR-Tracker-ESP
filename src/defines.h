@@ -26,7 +26,7 @@
 // ================================================
 
 // Quick swap 6050 and 9250
-//#define USE_6050
+// #define USE_6050
 
 // Set parameters of IMU and board used
 #define BOARD BOARD_CUSTOM
@@ -39,14 +39,14 @@
 //#define IMU_C2 IMU_MPU6050
 //#define IMU_D1 IMU_MPU6050
 //#define IMU_D2 IMU_MPU6050
-#define IMU_ROTATION_A1 DEG_90
-#define IMU_ROTATION_A2 DEG_90
-#define IMU_ROTATION_B1 DEG_90
-#define IMU_ROTATION_B2 DEG_90
-#define IMU_ROTATION_C1 DEG_90
-#define IMU_ROTATION_C2 DEG_90
-#define IMU_ROTATION_D1 DEG_90
-#define IMU_ROTATION_D2 DEG_90
+#define IMU_ROTATION_A1 DEG_270
+#define IMU_ROTATION_A2 DEG_270
+#define IMU_ROTATION_B1 DEG_270
+#define IMU_ROTATION_B2 DEG_270
+#define IMU_ROTATION_C1 DEG_270
+#define IMU_ROTATION_C2 DEG_270
+#define IMU_ROTATION_D1 DEG_270
+#define IMU_ROTATION_D2 DEG_270
 //#define PIN_IMU_SDA 26
 //#define PIN_IMU_SCL_A 25
 #define PIN_IMU_SCL_B 15

@@ -34,7 +34,7 @@
 #endif
 
 #if defined(_MAHONY_H_) || defined(_MADGWICK_H_)
-constexpr float gscale = (2000. / 32768.0) * (PI / 180.0); //gyro default 2000 LSB per d/s -> rad/s
+constexpr float gscale = (250. / 32768.0) * (PI / 180.0); //gyro default 2000 LSB per d/s -> rad/s
 #endif
 
 #define MAG_CORR_RATIO 0.02
