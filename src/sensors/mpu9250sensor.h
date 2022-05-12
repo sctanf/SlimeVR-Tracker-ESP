@@ -59,6 +59,14 @@ private:
     float deltat = 0;                // loop time in seconds
 
     SlimeVR::Configuration::MPU9250CalibrationConfig m_Calibration;
+
+    float min_cutoff = 1.0;
+    float beta = 0.01;
+    float d_cutoff = 0.0;
+    float x_prev[3]{};
+    float dx_prev[3]{0, 0, 0};
+    float t_prev;
+    void filterMag();
 };
 
 #endif
