@@ -177,6 +177,7 @@ void MPU9250Sensor::motionLoop() {
     unsigned long deltat = now - last; //seconds since last update
     last = now;
     getMPUScaled();
+    filterMag();
     
     #if defined(_MAHONY_H_)
     mahonyQuaternionUpdate(q, Axyz[0], Axyz[1], Axyz[2], Gxyz[0], Gxyz[1], Gxyz[2], Mxyz[0], Mxyz[1], Mxyz[2], deltat * 1.0e-6);
@@ -398,4 +399,25 @@ void MPU9250Sensor::sleepSensor()
 {
     uint8_t val;
 	I2Cdev::writeBit(addr,0x6B, 6, (val = 1)); //PWR_MGMT_1: sleep mode
+}
+
+#define smoothingFactor(t_e, cutoff) 2 * Math_PI * cutoff * t_e / (2 * Math_PI * cutoff * t_e + 1)
+#define exponentialSmoothing(a, x, x_prev) a * x + (1 - a) * x_prev
+
+void MPU9250Sensor::filterMag()
+{
+    if (t_prev) for (int i=0; i<3; i++) {
+        if (!x_prev[i]) x_prev[i] = Mxyz[i];
+        float t_e = deltat - t_prev;
+        float a_d = smoothingFactor(t_e, d_cutoff);
+        float dx = (Mxyz[i] - x_prev[i]) / t_e;
+        float dx_hat = exponentialSmoothing(a_d, dx, dx_prev[i]);
+        float cutoff = min_cutoff + beta * abs(dx_hat);
+        float a = smoothingFactor(t_e, cutoff);
+        float x_hat = exponentialSmoothing(a, Mxyz[i], x_prev[i]);
+        x_prev[i] = x_hat;
+        dx_prev[i] = dx_hat;
+        Mxyz[i] = x_hat;
+    }
+    t_prev = deltat;
 }
