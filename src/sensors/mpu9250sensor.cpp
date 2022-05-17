@@ -407,27 +407,6 @@ void MPU9250Sensor::sleepSensor()
 
 void MPU9250Sensor::filterMag()
 {
-    if (t_prev) for (int i=0; i<3; i++) {
-        if (!x_prev[i]) x_prev[i] = Mxyz[i];
-        float t_e = deltat - t_prev;
-        float a_d = smoothingFactor(t_e, d_cutoff);
-        float dx = (Mxyz[i] - x_prev[i]) / t_e;
-        float dx_hat = exponentialSmoothing(a_d, dx, dx_prev[i]);
-        float cutoff = min_cutoff + beta * abs(dx_hat);
-        float a = smoothingFactor(t_e, cutoff);
-        float x_hat = exponentialSmoothing(a, Mxyz[i], x_prev[i]);
-        x_prev[i] = x_hat;
-        dx_prev[i] = dx_hat;
-        Mxyz[i] = x_hat;
-    }
-    t_prev = deltat;
-}
-
-#define smoothingFactor(t_e, cutoff) 2 * Math_PI * cutoff * t_e / (2 * Math_PI * cutoff * t_e + 1)
-#define exponentialSmoothing(a, x, x_prev) a * x + (1 - a) * x_prev
-
-void MPU9250Sensor::filterMag()
-{
     if (deltat != 0) {
         float t_e = deltat * 1.0e-6;
         float a_d = smoothingFactor(t_e, d_cutoff);
