@@ -167,7 +167,8 @@ void MPU9250Sensor::motionLoop() {
     quaternion = correction * quat;
 #else
     unsigned long now = micros();
-    unsigned long deltat = now - last; //seconds since last update
+    unsigned long deltat = now - last; //microseconds since last update
+    if (deltat > 1.0e6) deltat = 1.0e6; //limit to one second
     last = now;
     getMPUScaled();
     filterMag();
@@ -390,18 +391,19 @@ void MPU9250Sensor::startCalibration(int calibrationType) {
 
 void MPU9250Sensor::filterMag()
 {
-    if (t_prev) for (int i=0; i<3; i++) {
-        if (!x_prev[i]) x_prev[i] = Mxyz[i];
-        float t_e = deltat - t_prev;
+    if (deltat != 0) {
+        float t_e = deltat * 1.0e-6;
         float a_d = smoothingFactor(t_e, d_cutoff);
-        float dx = (Mxyz[i] - x_prev[i]) / t_e;
-        float dx_hat = exponentialSmoothing(a_d, dx, dx_prev[i]);
-        float cutoff = min_cutoff + beta * abs(dx_hat);
-        float a = smoothingFactor(t_e, cutoff);
-        float x_hat = exponentialSmoothing(a, Mxyz[i], x_prev[i]);
-        x_prev[i] = x_hat;
-        dx_prev[i] = dx_hat;
-        Mxyz[i] = x_hat;
+        for (int i=0; i<3; i++) {
+            if (!x_prev[i]) x_prev[i] = Mxyz[i];
+            float dx = (Mxyz[i] - x_prev[i]) / t_e;
+            float dx_hat = exponentialSmoothing(a_d, dx, dx_prev[i]);
+            float cutoff = min_cutoff + beta * abs(dx_hat);
+            float a = smoothingFactor(t_e, cutoff);
+            float x_hat = exponentialSmoothing(a, Mxyz[i], x_prev[i]);
+            x_prev[i] = x_hat;
+            dx_prev[i] = dx_hat;
+            Mxyz[i] = x_hat;
+        }
     }
-    t_prev = deltat;
 }
