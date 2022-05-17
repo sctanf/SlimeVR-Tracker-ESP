@@ -56,16 +56,15 @@ private:
     Quat correction{0, 0, 0, 0};
     // Loop timing globals
     unsigned long now = 0, last = 0; // micros() timers
-    float deltat = 0;                // loop time in seconds
+    float deltat = 0;                // loop time in microseconds
 
     SlimeVR::Configuration::MPU9250CalibrationConfig m_Calibration;
 
-    float min_cutoff = 1.0;
-    float beta = 0.01;
-    float d_cutoff = 0.0;
+    float min_cutoff = 0.2;
+    float beta = 0.02;
+    float d_cutoff = 0.1;
     float x_prev[3]{};
     float dx_prev[3]{0, 0, 0};
-    float t_prev;
     void filterMag();
 };
 
