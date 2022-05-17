@@ -65,7 +65,6 @@ private:
     float d_cutoff = 0.1;
     float x_prev[3]{};
     float dx_prev[3]{0, 0, 0};
-    float t_prev;
     void filterMag();
 };
 
