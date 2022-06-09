@@ -122,31 +122,6 @@ void WiFiNetwork::upkeep() {
         }
         statusManager.setStatus(SlimeVR::Status::WIFI_CONNECTING, true);
         reportWifiError();
-        if(wifiConnectionTimeout + 11000 < millis()) {
-            switch(wifiState) {
-                case 0: // Wasn't set up
-                return;
-                case 1: // Couldn't connect with first set of credentials
-                    #if defined(WIFI_CREDS_SSID) && defined(WIFI_CREDS_PASSWD)
-                        // Try hardcoded credentials now
-                        WiFi.begin(WIFI_CREDS_SSID, WIFI_CREDS_PASSWD);
-                        wifiConnectionTimeout = millis();
-                        wifiHandlerLogger.error("Can't connect from saved credentials, status: %d.", WiFi.status());
-                        wifiHandlerLogger.debug("Trying hardcoded credentials...");
-                    #endif
-                    wifiState = 2;
-                return;
-                case 2: // Couldn't connect with second set of credentials
-                    // Start smart config
-                    if(!hadWifi && !WiFi.smartConfigDone() && wifiConnectionTimeout + 11000 < millis()) {
-                        if(WiFi.status() != WL_IDLE_STATUS) {
-                            wifiHandlerLogger.error("Can't connect from any credentials, status: %d.", WiFi.status());
-                        }
-                        startProvisioning();
-                    }
-                return;
-            }
-        }
         return;
     }
     if(!isWifiConnected) {
