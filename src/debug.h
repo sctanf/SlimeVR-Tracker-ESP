@@ -48,10 +48,10 @@
 #define LED_INTERVAL_STANDBY 10000
 
 // Determines how often we sample and send data
-#define samplingRateInMillis 10
+#define samplingRateInMillis 1
 
 // Sleeping options
-#define POWERSAVING_MODE POWER_SAVING_MAXIMUM  // Minimum causes sporadic data pauses
+#define POWERSAVING_MODE POWER_SAVING_NONE  // Minimum causes sporadic data pauses
 #if POWERSAVING_MODE >= POWER_SAVING_MINIMUM
     #define TARGET_LOOPTIME_MICROS (samplingRateInMillis * 1000)
 #endif
@@ -71,7 +71,7 @@
 // If "false" updates are sent at the sensor update rate (usually 100 TPS)
 // If "true" updates will be less frequent in the time of little motion
 // Experimental
-#define OPTIMIZE_UPDATES false
+#define OPTIMIZE_UPDATES true
 
 #define I2C_SPEED 800000
 

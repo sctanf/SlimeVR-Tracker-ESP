@@ -34,7 +34,7 @@
 #endif
 
 #if defined(_MAHONY_H_) || defined(_MADGWICK_H_)
-constexpr float gscale = (250. / 32768.0) * (PI / 180.0); //gyro default 2000 LSB per d/s -> rad/s
+constexpr float gscale = (2000. / 32768.0) * (PI / 180.0); //gyro default 2000 LSB per d/s -> rad/s
 #endif
 
 #define MAG_CORR_RATIO 0.02
@@ -148,7 +148,7 @@ void MPU9250Sensor::motionLoop() {
     Quaternion rawQuat{};
     if(!imu.GetCurrentFIFOPacket(fifoBuffer,imu.dmpGetFIFOPacketSize())) return;
     if(imu.dmpGetQuaternion(&rawQuat, fifoBuffer)) return; // FIFO CORRUPTED
-    Quat quat(-rawQuat.y,rawQuat.x,rawQuat.z,rawQuat.w);
+    Quat quat(rawQuat.x,rawQuat.y,rawQuat.z,rawQuat.w);
 
     getMPUScaled();
 

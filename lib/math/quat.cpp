@@ -138,7 +138,7 @@ bool Quat::is_normalized() const {
 }
 
 bool Quat::equalsWithEpsilon(const Quat& q2) {
-	return ABS(x - q2.x) < 0.0001f && ABS(y - q2.y) < 0.0001f && ABS(z - q2.z) < 0.0001f && ABS(w - q2.w) < 0.0001f;
+	return ABS(x - q2.x) < 0.001f && ABS(y - q2.y) < 0.001f && ABS(z - q2.z) < 0.001f && ABS(w - q2.w) < 0.001f;
 }
 
 Quat Quat::inverse() const {
