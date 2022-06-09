@@ -55,9 +55,13 @@ BatteryMonitor battery;
 
 void setup()
 {
+    pinMode(13, OUTPUT);
+    digitalWrite(13, LOW);
+
     // need power management
     battery.Setup();
     if (battery.Loop(true)) {
+        pinMode(13, INPUT);
         //esp_sleep_enable_ext1_wakeup(1ULL<<39, ESP_EXT1_WAKEUP_ANY_HIGH);
         //esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_OFF);
         esp_deep_sleep_start();
@@ -106,10 +110,9 @@ void loop()
     sensorManager.update();
     Network::update(sensorManager.get());
     if (battery.Loop()) {
+        pinMode(13, INPUT);
         sensorManager.sleepSensors(true);
         sensorManager.setPinsInput();
-digitalWrite(18, LOW);
-pinMode(18, INPUT);
         esp_wifi_stop();
         //esp_sleep_enable_ext1_wakeup(1ULL<<39, ESP_EXT1_WAKEUP_ANY_HIGH);
         //esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_OFF);

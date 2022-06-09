@@ -78,10 +78,14 @@ bool BatteryMonitor::Loop(bool forceSample)
                 }
             #endif
             #if BATTERY_MONITOR == BAT_EXTERNAL
-                pinMode(13, OUTPUT);
-                digitalWrite(13, LOW);
-                voltage = ((float)analogRead(PIN_BATTERY_LEVEL)) * batteryADCMultiplier;
-                pinMode(13, INPUT);
+                //pinMode(13, OUTPUT);
+                //digitalWrite(13, LOW);
+                #ifdef ADC_NONLINEAR
+                    voltage = (((float)analogRead(PIN_BATTERY_LEVEL)) * 0.9 + ADCResulution * 0.05) * batteryADCMultiplier;
+                #else
+                    voltage = ((float)analogRead(PIN_BATTERY_LEVEL)) * batteryADCMultiplier;
+                #endif
+                //pinMode(13, INPUT);
             #endif
             #if BATTERY_MONITOR == BAT_MCP3021 || BATTERY_MONITOR == BAT_INTERNAL_MCP3021
                 if (address > 0)

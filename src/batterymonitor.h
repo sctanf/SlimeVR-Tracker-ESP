@@ -37,6 +37,7 @@
 #if ESP32
     #define ADCResulution 4095.0  // ESP32 has 12bit ADC
     #define ADCVoltageMax 3.3     // ESP32 input is 3.3 V = 4095.0
+    #define ADC_NONLINEAR // adc is nonlinear???
 #endif
 #ifndef ADCResulution
     #define ADCResulution 1023.0
