@@ -158,17 +158,8 @@ namespace SlimeVR
 #endif
                 Wire.begin(imuSDAPin[i/8], imuSCLPin[i/2]);
                 m_Sensor[i]->motionLoop();
-            }
-
-            if (ServerConnection::isConnected()) {
-                // Send updates
-#ifdef ESP32
-                for (uint8_t i=0; i<16; i++) {
-#else
-                for (uint8_t i=0; i<8; i++) {
-#endif
+                if (ServerConnection::isConnected())
                     m_Sensor[i]->sendData();
-                }
             }
         }
 
