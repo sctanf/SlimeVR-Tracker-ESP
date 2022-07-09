@@ -177,12 +177,13 @@ void MPU9250Sensor::motionLoop() {
     unsigned long deltat = now - last; //microseconds since last update
     if (deltat > 1.0e6) deltat = 1.0e6; //limit to one second
     last = now;
-
     getMPUScaled();
     filterMag();
 
     if (abs(Axyz[0]-lastAxyz[0])>250.0 || abs(Axyz[1]-lastAxyz[1])>250.0 || abs(Axyz[2]-lastAxyz[2])>250.0) {
-        if(now > lastaccelmovement + 2.0e6) m_Logger.info("Moved");
+        if(now > lastaccelmovement + 2.0e6) {
+            m_Logger.info("Moved");
+        }
         lastAxyz[0] = Axyz[0];
         lastAxyz[1] = Axyz[1];
         lastAxyz[2] = Axyz[2];
@@ -206,8 +207,7 @@ void MPU9250Sensor::motionLoop() {
 #endif
 
     //quaternion.slerp(lastQuatSent,CLAMP((now - lastaccelmovement) * 0.0000005f, 0.0f, 1.0f));
-    if(now < lastaccelmovement + 2.0e6)
-    if(!lastQuatSent.equalsWithEpsilon(quaternion)) {
+    if((now < lastaccelmovement + 2.0e6) && (!lastQuatSent.equalsWithEpsilon(quaternion))) {
         newData = true;
         lastQuatSent = quaternion;
     }
