@@ -58,6 +58,9 @@ private:
     unsigned long now = 0, last = 0; // micros() timers
     float deltat = 0;                // loop time in microseconds
 
+    float lastAxyz[3]{};
+    unsigned long lastaccelmovement = 0;
+
     SlimeVR::Configuration::MPU9250CalibrationConfig m_Calibration;
 
     float min_cutoff = 0.2;
