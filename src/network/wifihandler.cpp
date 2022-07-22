@@ -119,6 +119,7 @@ void WiFiNetwork::upkeep() {
         if(isWifiConnected) {
             wifiHandlerLogger.warn("Connection to WiFi lost, reconnecting...");
             isWifiConnected = false;
+            WiFi.reconnect();
         }
         statusManager.setStatus(SlimeVR::Status::WIFI_CONNECTING, true);
         reportWifiError();
