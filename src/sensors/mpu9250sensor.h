@@ -27,6 +27,7 @@
 #include "sensor.h"
 #include "logging/Logger.h"
 
+#include <1efilter.cc>
 #include <MPU.h>
 
 class MPU9250Sensor : public Sensor
@@ -61,14 +62,16 @@ private:
     float lastAxyz[3]{};
     unsigned long lastaccelmovement = 0;
 
-    SlimeVR::Configuration::MPU9250CalibrationConfig m_Calibration;
+    float mag_frequency = 200.f;
+    float beta = 0.02f;
+    float mincutoff = 0.005f;
+    float d_cutoff = 1.0f;
 
-    float min_cutoff = 0.2;
-    float beta = 0.02;
-    float d_cutoff = 0.1;
-    float x_prev[3]{};
-    float dx_prev[3]{0, 0, 0};
-    void filterMag();
+    OneEuroFilter f_mag_x{mag_frequency, mincutoff, beta, d_cutoff};
+    OneEuroFilter f_mag_y{mag_frequency, mincutoff, beta, d_cutoff};
+    OneEuroFilter f_mag_z{mag_frequency, mincutoff, beta, d_cutoff};
+
+    SlimeVR::Configuration::MPU9250CalibrationConfig m_Calibration;
 };
 
 #endif

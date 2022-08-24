@@ -33,6 +33,8 @@
 #include "dmpmag.h"
 #endif
 
+#define MAG_LSB_TO_MG_8G .333f
+
 #if defined(_MAHONY_H_) || defined(_MADGWICK_H_)
 constexpr float gscale = (2000. / 32768.0) * (PI / 180.0); //gyro default 2000 LSB per d/s -> rad/s
 #endif
@@ -178,7 +180,6 @@ void MPU9250Sensor::motionLoop() {
     if (deltat > 1.0e6) deltat = 1.0e6; //limit to one second
     last = now;
     getMPUScaled();
-    filterMag();
 
     if (abs(Axyz[0]-lastAxyz[0])>250.0 || abs(Axyz[1]-lastAxyz[1])>250.0 || abs(Axyz[2]-lastAxyz[2])>250.0) {
         if(now > lastaccelmovement + 2.0e6) {
@@ -257,13 +258,18 @@ void MPU9250Sensor::getMPUScaled()
     #if useFullCalibrationMatrix == true
         for (i = 0; i < 3; i++)
             temp[i] = (Mxyz[i] - m_Calibration.M_B[i]);
-        Mxyz[0] = m_Calibration.M_Ainv[0][0] * temp[0] + m_Calibration.M_Ainv[0][1] * temp[1] + m_Calibration.M_Ainv[0][2] * temp[2];
-        Mxyz[1] = m_Calibration.M_Ainv[1][0] * temp[0] + m_Calibration.M_Ainv[1][1] * temp[1] + m_Calibration.M_Ainv[1][2] * temp[2];
-        Mxyz[2] = m_Calibration.M_Ainv[2][0] * temp[0] + m_Calibration.M_Ainv[2][1] * temp[1] + m_Calibration.M_Ainv[2][2] * temp[2];
+        Mxyz[0] = (m_Calibration.M_Ainv[0][0] * temp[0] + m_Calibration.M_Ainv[0][1] * temp[1] + m_Calibration.M_Ainv[0][2] * temp[2]) * MAG_LSB_TO_MG_8G * .1f;
+        Mxyz[1] = (m_Calibration.M_Ainv[1][0] * temp[0] + m_Calibration.M_Ainv[1][1] * temp[1] + m_Calibration.M_Ainv[1][2] * temp[2]) * MAG_LSB_TO_MG_8G * .1f;
+        Mxyz[2] = (m_Calibration.M_Ainv[2][0] * temp[0] + m_Calibration.M_Ainv[2][1] * temp[1] + m_Calibration.M_Ainv[2][2] * temp[2]) * MAG_LSB_TO_MG_8G * .1f;
     #else
         for (i = 0; i < 3; i++)
             Mxyz[i] = (Mxyz[i] - m_Calibration.M_B[i]);
     #endif
+    
+    uint32_t t = micros();
+    Mxyz[0] = f_mag_y.filter(Mxyz[0], t);
+    Mxyz[1] = f_mag_x.filter(Mxyz[1], t);
+    Mxyz[2] = f_mag_z.filter(Mxyz[2], t);
 }
 
 void MPU9250Sensor::startCalibration(int calibrationType) {
@@ -411,26 +417,4 @@ void MPU9250Sensor::sleepSensor()
 {
     uint8_t val;
 	I2Cdev::writeBit(addr,0x6B, 6, (val = 1)); //PWR_MGMT_1: sleep mode
-}
-
-#define smoothingFactor(t_e, cutoff) 2 * Math_PI * cutoff * t_e / (2 * Math_PI * cutoff * t_e + 1)
-#define exponentialSmoothing(a, x, x_prev) a * x + (1 - a) * x_prev
-
-void MPU9250Sensor::filterMag()
-{
-    if (deltat != 0) {
-        float t_e = deltat * 1.0e-6;
-        float a_d = smoothingFactor(t_e, d_cutoff);
-        for (int i=0; i<3; i++) {
-            if (!x_prev[i]) x_prev[i] = Mxyz[i];
-            float dx = (Mxyz[i] - x_prev[i]) / t_e;
-            float dx_hat = exponentialSmoothing(a_d, dx, dx_prev[i]);
-            float cutoff = min_cutoff + beta * abs(dx_hat);
-            float a = smoothingFactor(t_e, cutoff);
-            float x_hat = exponentialSmoothing(a, Mxyz[i], x_prev[i]);
-            x_prev[i] = x_hat;
-            dx_prev[i] = dx_hat;
-            Mxyz[i] = x_hat;
-        }
-    }
 }
