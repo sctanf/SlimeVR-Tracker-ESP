@@ -47,9 +47,9 @@ namespace SlimeVR
             bool foundIMU = false;
             
 #ifdef ESP32
-            for (uint8_t i=0; i<16; i+=2) {
+            for (uint8_t i=0; i<IMU_COUNT; i+=2) {
 #else
-            for (uint8_t i=0; i<8; i+=2) {
+            for (uint8_t i=0; i<IMU_COUNT_SINGLE; i+=2) {
 #endif
                 uint8_t firstIMUAddress = 0;
                 uint8_t secondIMUAddress = 0;
@@ -123,9 +123,9 @@ namespace SlimeVR
             }
             if (foundIMU) {
 #ifdef ESP32
-                for (uint8_t i=0; i<16; i++) {
+                for (uint8_t i=0; i<IMU_COUNT; i++) {
 #else
-                for (uint8_t i=0; i<8; i++) {
+                for (uint8_t i=0; i<IMU_COUNT_SINGLE; i++) {
 #endif
                     //Wire.begin(imuSDAPin[i/8], imuSCLPin[i/2]);
                     //m_Sensor[i]->motionSetup();
@@ -139,9 +139,9 @@ namespace SlimeVR
         void SensorManager::postSetup()
         {
 #ifdef ESP32
-            for (uint8_t i=0; i<16; i++) {
+            for (uint8_t i=0; i<IMU_COUNT; i++) {
 #else
-            for (uint8_t i=0; i<8; i++) {
+            for (uint8_t i=0; i<IMU_COUNT_SINGLE; i++) {
 #endif
                 Wire.begin(imuSDAPin[i/8], imuSCLPin[i/2]);
                 m_Sensor[i]->postSetup();
@@ -152,9 +152,9 @@ namespace SlimeVR
         {
             // Gather IMU data
 #ifdef ESP32
-            for (uint8_t i=0; i<16; i++) {
+            for (uint8_t i=0; i<IMU_COUNT; i++) {
 #else
-            for (uint8_t i=0; i<8; i++) {
+            for (uint8_t i=0; i<IMU_COUNT_SINGLE; i++) {
 #endif
                 Wire.begin(imuSDAPin[i/8], imuSCLPin[i/2]);
                 m_Sensor[i]->motionLoop();
@@ -166,9 +166,9 @@ namespace SlimeVR
         void SensorManager::sleepSensors(bool sleepMain)
         {
 #ifdef ESP32
-            for (uint8_t i=sleepMain?0:1; i<16; i++) {
+            for (uint8_t i=sleepMain?0:1; i<IMU_COUNT; i++) {
 #else
-            for (uint8_t i=sleepMain?0:1; i<8; i++) {
+            for (uint8_t i=sleepMain?0:1; i<IMU_COUNT_SINGLE; i++) {
 #endif
                 Wire.begin(imuSDAPin[i/8], imuSCLPin[i/2]);
                 m_Sensor[i]->sleepSensor();

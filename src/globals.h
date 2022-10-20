@@ -28,6 +28,11 @@
 #include "debug.h"
 #include "defines.h"
 
+#ifndef IMU_COUNT
+#define IMU_COUNT 16
+#endif
+#define IMU_COUNT_SINGLE (IMU_COUNT > 8 ? 8 : IMU_COUNT)
+
 #ifndef SECOND_IMU
 #define SECOND_IMU IMU
 #endif

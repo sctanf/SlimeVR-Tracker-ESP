@@ -267,8 +267,8 @@ void MPU9250Sensor::getMPUScaled()
     #endif
     
     uint32_t t = micros();
-    Mxyz[0] = f_mag_y.filter(Mxyz[0], t);
-    Mxyz[1] = f_mag_x.filter(Mxyz[1], t);
+    Mxyz[0] = f_mag_x.filter(Mxyz[0], t);
+    Mxyz[1] = f_mag_y.filter(Mxyz[1], t);
     Mxyz[2] = f_mag_z.filter(Mxyz[2], t);
 }
 

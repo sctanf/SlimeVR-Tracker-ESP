@@ -25,6 +25,8 @@
 // https://docs.slimevr.dev/firmware/configuring-project.html#2-configuring-definesh
 // ================================================
 
+#define IMU_COUNT 4
+
 // Quick swap 6050 and 9250
 // #define USE_6050
 

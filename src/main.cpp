@@ -55,18 +55,25 @@ BatteryMonitor battery;
 
 void setup()
 {
-    pinMode(13, OUTPUT);
-    digitalWrite(13, LOW);
+    pinMode(32, OUTPUT);
+    digitalWrite(32, HIGH);
+    pinMode(33, OUTPUT);
+    digitalWrite(33, LOW);
 
-    // need power management
-    battery.Setup();
-    if (battery.Loop(true)) {
-        pinMode(13, INPUT);
-        //esp_sleep_enable_ext1_wakeup(1ULL<<39, ESP_EXT1_WAKEUP_ANY_HIGH);
-        //esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_OFF);
-        esp_deep_sleep_start();
-    }
-    //add pin power (mosfet) for imus
+    delay(1000);
+
+//    pinMode(13, OUTPUT);
+//    digitalWrite(13, LOW);
+
+//    // need power management
+//    battery.Setup();
+//    if (battery.Loop(true)) {
+//        pinMode(13, INPUT);
+//        //esp_sleep_enable_ext1_wakeup(1ULL<<39, ESP_EXT1_WAKEUP_ANY_HIGH);
+//        //esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_OFF);
+//        esp_deep_sleep_start();
+//    }
+//    //add pin power (mosfet) for imus
 
     Serial.begin(serialBaudRate);
     Serial.println();
@@ -109,14 +116,14 @@ void loop()
     OTA::otaUpdate();
     sensorManager.update();
     Network::update(sensorManager.get());
-    if (battery.Loop()) {
-        pinMode(13, INPUT);
-        sensorManager.sleepSensors(true);
-        sensorManager.setPinsInput();
-        esp_wifi_stop();
-        //esp_sleep_enable_ext1_wakeup(1ULL<<39, ESP_EXT1_WAKEUP_ANY_HIGH);
-        //esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_OFF);
-        esp_deep_sleep_start();
-    }
+//    if (battery.Loop()) {
+//        pinMode(13, INPUT);
+//        sensorManager.sleepSensors(true);
+//        sensorManager.setPinsInput();
+//        esp_wifi_stop();
+//        //esp_sleep_enable_ext1_wakeup(1ULL<<39, ESP_EXT1_WAKEUP_ANY_HIGH);
+//        //esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_OFF);
+//        esp_deep_sleep_start();
+//    }
     ledManager.update();
 }
