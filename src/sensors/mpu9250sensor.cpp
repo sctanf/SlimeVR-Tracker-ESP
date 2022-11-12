@@ -219,7 +219,8 @@ void MPU9250Sensor::motionLoop() {
 #endif
 
     //quaternion.slerp(lastQuatSent,CLAMP((now - lastaccelmovement) * 0.0000005f, 0.0f, 1.0f));
-    if((now < lastaccelmovement + 2.0e6) && (!lastQuatSent.equalsWithEpsilon(quaternion))) {
+    //if((now < lastaccelmovement + 2.0e6) && (!lastQuatSent.equalsWithEpsilon(quaternion))) {
+    if (!lastQuatSent.equalsWithEpsilon(quaternion)) {
         newData = true;
         lastQuatSent = quaternion;
     }

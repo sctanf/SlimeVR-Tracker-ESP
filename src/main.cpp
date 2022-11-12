@@ -55,6 +55,7 @@ BatteryMonitor battery;
 
 void setup()
 {
+    setCpuFrequencyMhz(80);
     pinMode(32, OUTPUT);
     digitalWrite(32, HIGH);
     pinMode(33, OUTPUT);
